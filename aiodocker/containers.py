@@ -19,7 +19,7 @@ from typing import (
     overload,
 )
 
-from aiohttp import ClientResponse, ClientWebSocketResponse
+from aiohttp import ClientResponse, ClientTimeout, ClientWebSocketResponse
 from multidict import MultiDict
 from yarl import URL
 
@@ -31,7 +31,7 @@ from .jsonstream import json_stream_list, json_stream_stream
 from .logs import DockerLog
 from .multiplexed import multiplexed_result_list, multiplexed_result_stream
 from .stream import Stream
-from .types import PortInfo
+from .types import SENTINEL, PortInfo, Sentinel
 from .utils import identical, parse_result
 
 
@@ -182,6 +182,7 @@ class DockerContainer:
         stdout: bool = False,
         stderr: bool = False,
         follow: bool = False,
+        timeout: Union[float, ClientTimeout, Sentinel, None] = SENTINEL,
         **kwargs,
     ) -> Any:
         if stdout is False and stderr is False:
@@ -190,7 +191,7 @@ class DockerContainer:
         params = {"stdout": stdout, "stderr": stderr, "follow": follow}
         params.update(kwargs)
         cm = self.docker._query(
-            f"containers/{self._id}/logs", method="GET", params=params
+            f"containers/{self._id}/logs", method="GET", params=params, timeout=timeout
         )
         if follow:
             return self._logs_stream(cm)
