@@ -163,6 +163,7 @@ class DockerContainer:
         stdout: bool = False,
         stderr: bool = False,
         follow: Literal[False] = False,
+        timeout: Union[float, ClientTimeout, Sentinel, None] = SENTINEL,
         **kwargs,
     ) -> List[str]: ...
 
@@ -173,6 +174,7 @@ class DockerContainer:
         stdout: bool = False,
         stderr: bool = False,
         follow: Literal[True],
+        timeout: Union[float, ClientTimeout, Sentinel, None] = SENTINEL,
         **kwargs,
     ) -> AsyncIterator[str]: ...
 
